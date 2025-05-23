@@ -2,7 +2,13 @@ package com.devterin.twis.service;
 
 import com.devterin.twis.model.User;
 import com.devterin.twis.repository.UserRepository;
+import com.devterin.twis.response.ApiResponse;
+import com.devterin.twis.response.AuthResponse;
+import com.devterin.twis.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,17 +17,12 @@ import java.util.Optional;
 @Service
 public class UserService {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
-    public User registerUser(User user) {
-        User newUser = User.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .build();
-        return userRepository.save(newUser);
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
 
     public User findUserById(Integer id) {
         Optional<User> user = userRepository.findById(id);

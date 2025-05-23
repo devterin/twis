@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping
-    public User addUser(@RequestBody User user) {
-        return userService.registerUser(user);
-    }
+//    @PostMapping("/addUser")
+//    public User addUser(@RequestBody User user) {
+//        return userService.registerUser(user);
+//    }
 
     @PutMapping("/{id}")
     public User updateUser(@RequestBody User user, @PathVariable int id) {

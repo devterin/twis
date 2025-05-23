@@ -13,18 +13,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/posts")
 public class PostController {
     @Autowired
     PostService postService;
 
-    @PostMapping("/posts/{userId}")
+    @PostMapping("/{userId}")
     public ResponseEntity<Post> createPost(Post post, @PathVariable Integer userId) {
         Post createPost = postService.createPost(post, userId);
 
         return new ResponseEntity<>(createPost, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/posts/{postId}/{userId}")
+    @DeleteMapping("/{postId}/{userId}")
     public ResponseEntity<ApiResponse> deletePost(@PathVariable Integer postId,
                                            @PathVariable Integer userId) {
         String message = postService.deletePost(postId, userId);
@@ -32,14 +33,14 @@ public class PostController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/posts/{postId}/{userId}")
+    @PutMapping("/{postId}/{userId}")
     public ResponseEntity<Post> savedPost(@PathVariable Integer postId,
                                                   @PathVariable Integer userId) {
         Post post = postService.savedPost(postId, userId);
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
-    @PutMapping("/posts/like/{postId}/{userId}")
+    @PutMapping("/like/{postId}/{userId}")
     public ResponseEntity<Post> likePost(@PathVariable Integer postId,
                                           @PathVariable Integer userId) {
         Post post = postService.likePost(postId, userId);
@@ -52,7 +53,7 @@ public class PostController {
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
-    @GetMapping("/post/user/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable Integer userId) {
         List<Post> postByUser = postService.findPostByUser(userId);
         return new ResponseEntity<>(postByUser, HttpStatus.OK);

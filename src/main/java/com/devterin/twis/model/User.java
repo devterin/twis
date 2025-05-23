@@ -24,8 +24,8 @@ public class User {
     private List<Integer> followers;
     private List<Integer> followings;
 
-    @OneToMany
-    private List<Post> posts;
+    @ManyToMany
+    private List<Post> savedPost;
 
 
 }

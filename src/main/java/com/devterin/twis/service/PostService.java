@@ -18,7 +18,7 @@ public class PostService {
     PostRepository postRepository;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
     private UserRepository userRepository;
 
@@ -46,9 +46,9 @@ public class PostService {
     public Post savedPost(Integer postId, Integer userId) {
         Post post = findPostById(postId);
         User user = userService.findUserById(userId);
-        if (user.getPosts().contains(post)) {
-            user.getPosts().remove(post);
-        } else user.getPosts().add(post);
+        if (user.getSavedPost().contains(post)) {
+            user.getSavedPost().remove(post);
+        } else user.getSavedPost().add(post);
         return postRepository.save(post);
     }
 
