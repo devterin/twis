@@ -1,8 +1,10 @@
 package com.devterin.twis.controller;
 
 import com.devterin.twis.model.Post;
+import com.devterin.twis.model.User;
 import com.devterin.twis.response.ApiResponse;
 import com.devterin.twis.service.PostService;
+import com.devterin.twis.service.UserService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,33 +19,42 @@ import java.util.List;
 public class PostController {
     @Autowired
     PostService postService;
+    @Autowired
+    UserService userService;
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<Post> createPost(Post post, @PathVariable Integer userId) {
-        Post createPost = postService.createPost(post, userId);
+    @PostMapping("/create")
+    public ResponseEntity<Post> createPost(@RequestBody Post post,
+                                           @RequestHeader("Authorization") String token) {
+        User reqUser = userService.findUserByJwtToken(token);
+
+        Post createPost = postService.createPost(post, reqUser.getId());
 
         return new ResponseEntity<>(createPost, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{postId}/{userId}")
-    public ResponseEntity<ApiResponse> deletePost(@PathVariable Integer postId,
-                                           @PathVariable Integer userId) {
-        String message = postService.deletePost(postId, userId);
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<ApiResponse> deletePost(@RequestHeader("Authorization") String token,
+                                                  @PathVariable Integer postId) {
+
+        User reqUser = userService.findUserByJwtToken(token);
+        String message = postService.deletePost(postId, reqUser.getId());
         ApiResponse response = new ApiResponse(message, true);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/{postId}/{userId}")
+    @PutMapping("/saved/{postId}")
     public ResponseEntity<Post> savedPost(@PathVariable Integer postId,
-                                                  @PathVariable Integer userId) {
-        Post post = postService.savedPost(postId, userId);
+                                          @RequestHeader("Authorization") String token) {
+        User reqUser = userService.findUserByJwtToken(token);
+        Post post = postService.savedPost(postId, reqUser.getId());
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 
-    @PutMapping("/like/{postId}/{userId}")
-    public ResponseEntity<Post> likePost(@PathVariable Integer postId,
-                                          @PathVariable Integer userId) {
-        Post post = postService.likePost(postId, userId);
+    @PutMapping("/like/{postId}")
+    public ResponseEntity<Post> likePost(@RequestHeader("Authorization") String token,
+                                         @PathVariable Integer postId) {
+        User reqUser = userService.findUserByJwtToken(token);
+        Post post = postService.likePost(postId, reqUser.getId());
         return new ResponseEntity<>(post, HttpStatus.OK);
     }
 

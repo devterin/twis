@@ -15,19 +15,26 @@ public class UserController {
     @Autowired
     UserService userService;
 
-//    @PostMapping("/addUser")
-//    public User addUser(@RequestBody User user) {
-//        return userService.registerUser(user);
-//    }
-
-    @PutMapping("/{id}")
-    public User updateUser(@RequestBody User user, @PathVariable int id) {
-        return userService.updateUser(user, id);
+    @GetMapping("/profile")
+    public User getUserProfile(@RequestHeader("Authorization") String token) {
+        User user = userService.findUserByJwtToken(token);
+        user.setPassword(null);
+        return user;
     }
 
-    @PutMapping("/{userId1}/{userId2}")
-    public User followUserHandle(@PathVariable int userId1, @PathVariable int userId2) {
-        return userService.followUser(userId1, userId2);
+    @PutMapping
+    public User updateUser(@RequestHeader("Authorization") String token,
+                           @RequestBody User user) {
+        User reqUser = userService.findUserByJwtToken(token);
+        return userService.updateUser(user, reqUser.getId());
+    }
+
+    @PutMapping("/follow/{userId2}")
+    public User followUserHandle(@RequestHeader("Authorization") String token,
+                                 @PathVariable Integer userId2) {
+
+        User reqUser = userService.findUserByJwtToken(token);
+        return userService.followUser(reqUser.getId(), userId2);
     }
 
     @GetMapping("/search")

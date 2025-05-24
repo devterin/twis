@@ -19,10 +19,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-
 
     public User findUserById(Integer id) {
         Optional<User> user = userRepository.findById(id);
@@ -36,27 +32,43 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public User followUser(Integer userId1, Integer userId2) {
-        User user1 = findUserById(userId1);
+    public User findUserByJwtToken(String token) {
+        String email = JwtUtils.getEmailFromJwtToken(token);
+        return userRepository.findByEmail(email);
+    }
+
+    public User followUser(Integer reqUserId, Integer userId2) {
+        User reqUser = findUserById(reqUserId);
         User user2 = findUserById(userId2);
-        user2.getFollowers().add(userId1);
-        user1.getFollowings().add(userId2);
-        userRepository.save(user1);
+        user2.getFollowers().add(reqUser.getId());
+        reqUser.getFollowings().add(userId2);
+        userRepository.save(reqUser);
         userRepository.save(user2);
-        return user1;
+        return reqUser;
     }
 
     public User updateUser(User user, Integer userId) {
-        Optional<User> currentUser = userRepository.findById(userId);
-        if (currentUser.isEmpty()) {
+        Optional<User> currentUserOpt = userRepository.findById(userId);
+        if (currentUserOpt.isEmpty()) {
             throw new RuntimeException("user not found");
         }
-        user.setFirstName(currentUser.get().getFirstName());
-        user.setLastName(currentUser.get().getLastName());
-        user.setEmail(currentUser.get().getEmail());
-        user.setPassword(currentUser.get().getPassword());
-        user.setGender(currentUser.get().getGender());
-        return userRepository.save(user);
+        User currentUser = currentUserOpt.get();
+        if (user.getFirstName() != null) {
+            currentUser.setFirstName(user.getFirstName());
+        }
+        if (user.getLastName() != null) {
+            currentUser.setLastName(user.getLastName());
+        }
+        if (user.getEmail() != null) {
+            currentUser.setEmail(user.getEmail());
+        }
+        if (user.getPassword() != null) {
+            currentUser.setPassword(user.getPassword());
+        }
+        if (user.getGender() != null) {
+            currentUser.setGender(user.getGender());
+        }
+        return userRepository.save(currentUser);
     }
 
     public List<User> searchUser(String keyword) {

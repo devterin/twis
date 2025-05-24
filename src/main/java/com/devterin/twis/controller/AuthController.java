@@ -20,13 +20,13 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @PostMapping("/register")
+    @PostMapping("/signup")
     public AuthResponse registerUser(@RequestBody User user) {
         return authService.registerUser(user);
     }
 
 
-    @PostMapping("/login")
+    @PostMapping("/signin")
     public AuthResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
     }

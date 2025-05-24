@@ -38,6 +38,7 @@ public class AuthService {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .password(passwordEncoder.encode(user.getPassword()))
+                .gender(user.getGender())
                 .build();
         User saved = userRepository.save(newUser);
         Authentication authentication =
